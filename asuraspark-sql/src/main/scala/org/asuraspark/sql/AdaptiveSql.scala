@@ -47,7 +47,6 @@ object AdaptiveSql {
       conf.setConfString(SQLConf.AUTO_BROADCASTJOIN_THRESHOLD.key, "80")
 //      conf.setConfString(SQLConf.ADAPTIVE_EXECUTION_LOG_LEVEL.key, "ERROR")
       val df2 = spark.sql(query)
-
       df2.collect()
       df2.show()
     }
