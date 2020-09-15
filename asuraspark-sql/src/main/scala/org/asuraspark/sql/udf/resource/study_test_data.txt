@@ -1,0 +1,4 @@
+liu1	Chn:99,Math:98,Eng:97	liu11,liu12,liu13
+liu2	Chn:89,Math:88,Eng:87	liu21,liu22,liu23
+liu3	Chn:79,Math:78,Eng:77	liu31,liu32,liu33
+liu4	Chn:69,Math:68,Eng:67	liu41,liu42,liu43

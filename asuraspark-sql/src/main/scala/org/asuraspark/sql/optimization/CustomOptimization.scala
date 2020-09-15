@@ -93,19 +93,34 @@ class StrictParser(parser:ParserInterface) extends ParserInterface{
         }
         project
       case filter @ Filter(expression,_) =>
-        println("9999999999999999")
-        println(expression.sql)
+//        println("9999999999999999")
+//        println(expression.sql)
 //        expression.asInstanceOf[EqualTo].symbol
         filter
     }
     logicalPlan
   }
 
-  override def parseExpression(sqlText: String): Expression =
-    parser.parseExpression(sqlText)
+  override def parseExpression(sqlText: String): Expression = {
 
-  override def parseTableIdentifier(sqlText: String): TableIdentifier =
-    parser.parseTableIdentifier(sqlText)
+    val expression = parser.parseExpression(sqlText)
+
+    expression
+  }
+
+  override def parseTableIdentifier(sqlText: String): TableIdentifier = {
+    println("parseTableIdentifier ===============")
+    println()
+    val identifier = parser.parseTableIdentifier(sqlText)
+    println(s"database : ${identifier.database}")
+    println(s"identifier : ${identifier.identifier}")
+    println(s"productPrefix : ${identifier.productPrefix}")
+    println(s"unquotedString : ${identifier.unquotedString}")
+    println(s"table : ${identifier.table}")
+    println()
+    println("parseTableIdentifier ===============")
+    identifier
+  }
 
   override def parseFunctionIdentifier(sqlText: String): FunctionIdentifier =
     parser.parseFunctionIdentifier(sqlText)
@@ -134,5 +149,38 @@ class StrictParser(parser:ParserInterface) extends ParserInterface{
 //    val extBuilder: ExtensionsBuilder = { e => e.injectParser(parserBuilder)}
 //    extensions.injectParser(parserBuilder)
 //
+//  }
+//}
+
+//class MyExtensions extends Function1[SparkSessionExtensions, Unit] {
+//  override def apply(extensions: SparkSessionExtensions): Unit = {
+//    // 添加Analyzer自定义规则到Resolution阶段，analyzer负责逻辑执行计划生成
+//    extensions.injectResolutionRule { session =>
+//      //
+//    }
+//
+//    // 添加parser自定义规则，parser负责SQL解析
+//    extensions.injectParser { (session, parser) =>
+//      //
+//    }
+//
+//    // 添加optimizer自定义规则，optimizer负责逻辑执行计划的优化
+//    extensions.injectOptimizerRule { (session) =>
+//      //
+//    }
+//
+//    // 添加planner strategy自定义规则，planner负责物理执行计划的生成
+//    extensions.injectPlannerStrategy { (session) =>
+//      //
+//    }
+//
+//    // 添加Analyzer自定义规则到Post Resolution阶段
+//    extensions.injectPostHocResolutionRule { (session) =>
+//      //
+//    }
+//    // 添加Analyzer自定义Check规则
+//    extensions.injectCheckRule { (session) =>
+//      //
+//    }
 //  }
 //}
