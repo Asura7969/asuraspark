@@ -31,6 +31,7 @@ object ComplexStruct {
     // 最后组装成struct DataType
     val studyDataType = DataType.fromJson(studyTypeJsonStr)
 
+
     val spark = SparkSession.builder()
         .master("local[*]")
         .appName("Complex Struct example")
