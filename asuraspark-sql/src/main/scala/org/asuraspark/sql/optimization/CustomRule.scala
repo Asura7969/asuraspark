@@ -49,15 +49,24 @@ object CustomRule {
     val result2 = tableA.join(tableB,Seq("id"))
         .groupBy()
         .count()
+
     result2.show()
 
     println("add custom rule ...")
 
-    println(result2.queryExecution.executedPlan.toString())
+    println(result2.queryExecution.toString())
+
+    Thread.sleep(1000)
+//    println()
+    println(s"tableA output : ${tableA.queryExecution.sparkPlan.output}")
+    println(s"tableB output : ${tableB.queryExecution.sparkPlan.output}")
+//    println(s"result2 allAttributes : ${result2.queryExecution.sparkPlan.allAttributes.attrs}")
+//    println(s"result2 containsChild : ${result2.queryExecution.sparkPlan.containsChild}")
+//    println(s"result2 analyzed allAttributes : ${result2.queryExecution.analyzed.allAttributes.attrs}")
 
   }
 }
-
+// 判断两个range的start 和 end，来求区间的交集
 case object IntervalJoin extends Strategy with Serializable {
   def apply(plan: LogicalPlan): Seq[SparkPlan] =
     plan match {
@@ -66,11 +75,11 @@ case object IntervalJoin extends Strategy with Serializable {
       Inner, Some(EqualTo(e1, e2)))
         if ((o1 semanticEquals e1) && (o2 semanticEquals e2)) ||
             ((o1 semanticEquals e2) && (o2 semanticEquals e1)) =>
-        if ((end2 >= start1) && (end2 <= end2)) {
+        if ((end2 >= start1) && (start2 <= end1)) {
           val start = math.max(start1, start2)
           val end = math.min(end1, end2)
           val part = math.max(part1.getOrElse(200), part2.getOrElse(200))
-          val result= RangeExec(Range(start, end, 1, Some(part), o1 :: Nil, false))
+          val result = RangeExec(Range(start, end, 1, Some(part), o1 :: Nil, false))
           val twoColumns = ProjectExec(
             Alias(o1, o1.name)(exprId = o1.exprId) :: Nil,
             result)

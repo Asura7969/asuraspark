@@ -11,6 +11,13 @@ object TimeWindowExample {
         .appName("time window example")
         .getOrCreate()
 
+    val lineSeparator = System.lineSeparator
+    println("1111")
+    println(lineSeparator.getBytes("utf-8").contains("\\r\\n"))
+    System.out.println(lineSeparator)
+    println("1111")
+
+
     sparkSession.sparkContext.setLogLevel("ERROR")
 
     val stocksDF = sparkSession.read.option("header","true").

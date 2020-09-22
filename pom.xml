@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>asuraspark-sql</module>
+        <module>asuraspark-datasource</module>
         <module>asuraspark-listener</module>
     </modules>
     <packaging>pom</packaging>

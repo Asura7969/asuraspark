@@ -1,5 +1,6 @@
 package org.asuraspark.sql.catalog
 
+import org.apache.spark.scheduler.{SparkListener, SparkListenerStageCompleted}
 import org.apache.spark.sql.SparkSession
 
 object CatalogExample {
@@ -11,6 +12,14 @@ object CatalogExample {
         .getOrCreate()
 
     sparkSession.sparkContext.setLogLevel("ERROR")
+
+    sparkSession.sqlContext.sparkContext.addSparkListener(new SparkListener {
+      override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
+        super.onStageCompleted(stageCompleted)
+        stageCompleted.stageInfo.taskMetrics
+      }
+    })
+//    sparkSession.sqlContext.sparkContext.removeSparkListener()
 
     val df = sparkSession.read.csv("asuraspark-sql/src/main/resources/sales.csv")
     df.createTempView("sales")
