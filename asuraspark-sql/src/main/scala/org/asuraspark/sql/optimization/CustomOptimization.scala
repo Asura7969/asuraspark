@@ -9,6 +9,8 @@ import org.apache.spark.sql.catalyst.parser.ParserInterface
 import org.apache.spark.sql.catalyst.plans.logical.{Filter, LogicalPlan, Project}
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.types.{DataType, Decimal, StructType}
+import org.asuraspark.sql.rule.DependencyCollectRule
+
 
 object CustomOptimization {
 
@@ -46,17 +48,24 @@ object CustomOptimization {
         .withExtensions(extBuilder)
         .getOrCreate()
 
+    sparkSession.experimental.extraOptimizations = Seq(DependencyCollectRule(sparkSession))
 
     val df = sparkSession.read.option("header","true")
         .csv("asuraspark-sql/src/main/resources/sales.csv")
 
     df.createTempView("sales")
 
+    println(sparkSession.catalog.currentDatabase)
+    // 测试血缘依赖分析
+    sparkSession.sql("""CREATE TABLE default.dependencyCollect_test (name STRING, id int) using orc  PARTITIONED BY (id)""").show(100)
+
+
     val multipliedDF = df.selectExpr("amountPaid * 1")
     println(multipliedDF.queryExecution.optimizedPlan.numberedTreeString)
 
     // 添加自定义优化
-    sparkSession.experimental.extraOptimizations = Seq(MultiplyOptimizationRule)
+    sparkSession.experimental.extraOptimizations.++:(Seq(MultiplyOptimizationRule))
+
     val multipliedDFWithOptimization = df.selectExpr("amountPaid * 1")
 //    val multipliedDFWithOptimization = df.selectExpr("1 * amountPaid")
 
