@@ -57,8 +57,8 @@ object CustomOptimization {
 
     println(sparkSession.catalog.currentDatabase)
     // 测试血缘依赖分析
-    sparkSession.sql("""CREATE TABLE default.dependencyCollect_test (name STRING, id int) using orc  PARTITIONED BY (id)""").show(100)
-
+    val createTableDF = sparkSession.sql("""CREATE TABLE default.dependencyCollect_test (name STRING, id int) using orc  PARTITIONED BY (id)""")
+    createTableDF.show(100)
 
     val multipliedDF = df.selectExpr("amountPaid * 1")
     println(multipliedDF.queryExecution.optimizedPlan.numberedTreeString)
@@ -75,7 +75,9 @@ object CustomOptimization {
     multipliedDFWithOptimization.show(10)
 
 //    df.selectExpr("transactionId,customerId,itemId,amountPaid").where("amountPaid == 500").show(1)
-    sparkSession.sql("select transactionId,customerId,itemId,amountPaid from sales where amountPaid <> 500").show(10)
+    val codeGenDF = sparkSession.sql("select transactionId,customerId,itemId,amountPaid from sales where amountPaid <> 500")
+    codeGenDF.show(10)
+    codeGenDF.queryExecution.debug.codegen()
 
     val starSelectDf = sparkSession.sql("select * from sales")
     starSelectDf.show(5)

@@ -11,15 +11,32 @@
         <module>asuraspark-sql</module>
         <module>asuraspark-datasource</module>
         <module>asuraspark-listener</module>
+        <module>asuraspark-hdfs</module>
     </modules>
     <packaging>pom</packaging>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <properties>
         <spark.version>2.4.6</spark.version>
+        <hadoop.version>2.9.2</hadoop.version>
         <hive.version>2.3.3</hive.version>
         <jedis.version>3.3.0</jedis.version>
         <fastjson.version>1.2.73</fastjson.version>
         <lombok.version>1.18.12</lombok.version>
+        <orc.version>1.5.12</orc.version>
         <scala.version>2.11.8</scala.version>
         <scala.perfix.version>2.11</scala.perfix.version>
     </properties>
@@ -50,6 +67,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>
+                <artifactId>spark-catalyst_${scala.perfix.version}</artifactId>
+                <version>${spark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.spark</groupId>
                 <artifactId>spark-hive_${scala.perfix.version}</artifactId>
                 <version>${spark.version}</version>
 <!--                <scope>provided</scope>-->
@@ -65,6 +87,11 @@
                 <version>${scala.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>2.9.2</version>
+            </dependency>
+            <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
                 <version>${jedis.version}</version>
@@ -72,6 +99,11 @@
             <dependency>
                 <groupId>org.apache.hive</groupId>
                 <artifactId>hive-exec</artifactId>
+                <version>${hive.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hive</groupId>
+                <artifactId>hive-common</artifactId>
                 <version>${hive.version}</version>
             </dependency>
             <dependency>
@@ -89,6 +121,16 @@
                 <groupId>com.crealytics</groupId>
                 <artifactId>spark-excel_2.11</artifactId>
                 <version>0.13.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.orc</groupId>
+                <artifactId>orc-core</artifactId>
+                <version>${orc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.orc</groupId>
+                <artifactId>orc-mapreduce</artifactId>
+                <version>${orc.version}</version>
             </dependency>
 <!--            <dependency>-->
 <!--                <groupId>org.apache.spark</groupId>-->
