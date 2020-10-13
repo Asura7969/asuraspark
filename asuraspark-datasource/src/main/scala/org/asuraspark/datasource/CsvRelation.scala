@@ -18,7 +18,7 @@ case class CsvRelation(path:String, hasHead:Boolean = true, column:Map[String,Da
   }
 
   override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
-
+    null
   }
 
   override def insert(data: DataFrame, overwrite: Boolean): Unit = {

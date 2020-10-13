@@ -37,6 +37,7 @@
         <fastjson.version>1.2.73</fastjson.version>
         <lombok.version>1.18.12</lombok.version>
         <orc.version>1.5.12</orc.version>
+        <janino.version>3.0.16</janino.version>
         <scala.version>2.11.8</scala.version>
         <scala.perfix.version>2.11</scala.perfix.version>
     </properties>
@@ -131,6 +132,11 @@
                 <groupId>org.apache.orc</groupId>
                 <artifactId>orc-mapreduce</artifactId>
                 <version>${orc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.janino</groupId>
+                <artifactId>janino</artifactId>
+                <version>${janino.version}</version>
             </dependency>
 <!--            <dependency>-->
 <!--                <groupId>org.apache.spark</groupId>-->

@@ -5,7 +5,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.joins.{BroadcastHashJoinExec, BroadcastNestedLoopJoinExec, SortMergeJoinExec}
 //import org.apache.spark.sql.execution.ui.SparkListenerSQLAdaptiveExecutionUpdate
 import org.apache.spark.sql.functions.{broadcast, soundex}
-import org.apache.spark.sql.internal.SQLConf.{ADAPTIVE_EXECUTION_ENABLED, AUTO_BROADCASTJOIN_THRESHOLD}
+import org.apache.spark.sql.internal.SQLConf.{ADAPTIVE_EXECUTION_ENABLED, AUTO_BROADCASTJOIN_THRESHOLD,SHUFFLE_PARTITIONS}
 
 import scala.util.{Failure, Try}
 
@@ -21,88 +21,45 @@ object BroadcastJoinExample {
       .master("local[*]")
       .appName("broadcast join example")
       .config(ADAPTIVE_EXECUTION_ENABLED.key,"true")
-//      .config(AUTO_BROADCASTJOIN_THRESHOLD.key,"100MB")
+      .config(AUTO_BROADCASTJOIN_THRESHOLD.key,"-1")
+        .config(SHUFFLE_PARTITIONS.key,2)
       .getOrCreate()
 
-    var finalPlanCnt = 0
-//    val listener = new SparkListener {
-//      override def onOtherEvent(event: SparkListenerEvent): Unit = {
-//        event match {
-//          case SparkListenerSQLAdaptiveExecutionUpdate(_, _, sparkPlanInfo) =>
-//            if (sparkPlanInfo.simpleString.startsWith(
-//              "AdaptiveSparkPlan isFinalPlan=true")) {
-//              finalPlanCnt += 1
-//            }
-//          case _ => // ignore other events
-//        }
-//      }
-//    }
-//    spark.sparkContext.addSparkListener(listener)
-
-
-
-    // 模拟 bradcast join OOM
-    val larger = spark.range(20000000).as('id)
-//    val larger = spark.range(200).as('id)
-    val small = spark.range(100000000).as('id)
-
-//    val broadcastJoinDF = larger.join(broadcast(small), Seq("id"))
-//    broadcastJoinDF.show(100)
-//    println(broadcastJoinDF.queryExecution.toString())
+    val larger = spark.range(200).as('id)
+    val small = spark.range(100).as('id)
 
     larger.createOrReplaceTempView("larger")
     small.createOrReplaceTempView("small")
 
-    val joinResultDF = spark.sql(
-      """
-        |
-        |select /*+ BROADCAST(small) */ *
-        |FROM larger JOIN small
-        |ON larger.id = small.id
-        |
-        |""".stripMargin)
-
 //    val joinResultDF = spark.sql(
 //      """
 //        |
-//        |select *
+//        |select /*+ BROADCAST(small) */ *
 //        |FROM larger JOIN small
 //        |ON larger.id = small.id
 //        |
 //        |""".stripMargin)
 
-
+    val joinResultDF = spark.sql(
+      """
+        |
+        |select *
+        |FROM larger JOIN small
+        |ON larger.id = small.id
+        |
+        |""".stripMargin)
     val plan = joinResultDF.queryExecution.executedPlan
 
     println(plan.toString())
 
-    val operators = plan.collect{
-      case j: BroadcastHashJoinExec => j
-      case j: BroadcastNestedLoopJoinExec => j
-      case a => a
-    }
+    joinResultDF.queryExecution.debug.codegen()
 
-    val joinType = operators.head;
-    if (joinType.getClass == classOf[BroadcastHashJoinExec] ||
-      joinType.getClass == classOf[BroadcastNestedLoopJoinExec]) {
-//      val broadcastJoin = joinType.asInstanceOf[BroadcastHashJoinExec]
-//      broadcastJoin.prepare()
-//
-//      physical.prepare()
-//      println("broadcast join 发生OOM,需要转化为 SMJ")
-//      Try{
-//        joinType.prepare()
-//      } match {
-//        case Failure(ex) =>
-//          if(ex.isInstanceOf[OutOfMemoryError]){
-//            ex.getSuppressed.contains(t => t.getClass.isInstanceOf[OutOfMemoryError])
-//            println("broadcast join 发生OOM,需要转化为 SMJ")
-//          }
-//      }
-    }
+
 
 
     joinResultDF.show(100)
+
+    Thread.sleep(86400000L)
 
   }
 
