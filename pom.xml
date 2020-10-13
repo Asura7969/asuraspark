@@ -30,7 +30,8 @@
     </repositories>
 
     <properties>
-        <spark.version>2.4.6</spark.version>
+        <spark.version>2.4.7</spark.version>
+<!--        <spark.version>3.0.0</spark.version>-->
         <hadoop.version>2.9.2</hadoop.version>
         <hive.version>2.3.3</hive.version>
         <jedis.version>3.3.0</jedis.version>
@@ -38,7 +39,7 @@
         <lombok.version>1.18.12</lombok.version>
         <orc.version>1.5.12</orc.version>
         <janino.version>3.0.16</janino.version>
-        <scala.version>2.11.8</scala.version>
+        <scala.version>2.11.12</scala.version>
         <scala.perfix.version>2.11</scala.perfix.version>
     </properties>
     <dependencyManagement>

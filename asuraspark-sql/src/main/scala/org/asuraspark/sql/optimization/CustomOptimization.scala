@@ -136,8 +136,8 @@ class StrictParser(parser:ParserInterface) extends ParserInterface{
   override def parseFunctionIdentifier(sqlText: String): FunctionIdentifier =
     parser.parseFunctionIdentifier(sqlText)
 
-  //    override def parseMultipartIdentifier(sqlText: String): Seq[String] =
-  //      parser.parseMultipartIdentifier(sqlText)
+//      override def parseMultipartIdentifier(sqlText: String): Seq[String] =
+//        parser.parseMultipartIdentifier(sqlText)
 
   override def parseTableSchema(sqlText: String): StructType =
     parser.parseTableSchema(sqlText)
@@ -145,8 +145,8 @@ class StrictParser(parser:ParserInterface) extends ParserInterface{
   override def parseDataType(sqlText: String): DataType =
     parser.parseDataType(sqlText)
 
-  //    override def parseRawDataType(sqlText: String): DataType =
-  //      parser.parseRawDataType(sqlText)
+//      override def parseRawDataType(sqlText: String): DataType =
+//        parser.parseRawDataType(sqlText)
 }
 
 //class MyExtensions extends (SparkSessionExtensions => Unit) with Logging {

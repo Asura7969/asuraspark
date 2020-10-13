@@ -6,7 +6,8 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.catalyst.catalog.{CatalogTable, HiveTableRelation}
 import org.apache.spark.sql.catalyst.planning.PhysicalOperation
-import org.apache.spark.sql.catalyst.plans.logical.{InsertIntoTable, LogicalPlan}
+//import org.apache.spark.sql.catalyst.plans.logical.{InsertIntoTable, LogicalPlan}
+import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.catalyst.rules.Rule
 import org.apache.spark.sql.execution.command.{CreateDataSourceTableCommand, CreateTableCommand}
 import org.apache.spark.sql.execution.datasources.CreateTable
@@ -23,9 +24,9 @@ class DependencyCollectRule(sparkSession: SparkSession) extends Rule[LogicalPlan
         case a@InsertIntoHiveTable(table: CatalogTable,_,_,_,_,_) =>
           writeTables += s"${fillBlankDatabase(table)}.${table.identifier.table}"
           a
-        case i@InsertIntoTable(table: HiveTableRelation, _, _, _, _) =>
-          writeTables += s"${table.tableMeta.database}.${table.tableMeta.identifier.table}"
-          i
+//        case i@InsertIntoTable(table: HiveTableRelation, _, _, _, _) =>
+//          writeTables += s"${table.tableMeta.database}.${table.tableMeta.identifier.table}"
+//          i
         case r@CreateDataSourceTableCommand(table: CatalogTable, _) =>
           writeTables += s"${fillBlankDatabase(table)}.${table.identifier.table}"
           r
