@@ -4,6 +4,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.internal.SQLConf.{ADAPTIVE_EXECUTION_ENABLED, AUTO_BROADCASTJOIN_THRESHOLD,SHUFFLE_PARTITIONS}
 
 /**
+ * https://www.iteblog.com/archives/9870.html
  * @description join
  * @author asura7969
  * @created 2020/10/01 15:31 下午
