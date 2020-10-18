@@ -1,7 +1,10 @@
 package org.asuraspark.sql.example
 
+import org.apache.spark.scheduler.{SparkListener, SparkListenerStageSubmitted}
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.internal.SQLConf.{ADAPTIVE_EXECUTION_ENABLED, AUTO_BROADCASTJOIN_THRESHOLD,SHUFFLE_PARTITIONS}
+import org.apache.spark.sql.execution.QueryExecution
+import org.apache.spark.sql.internal.SQLConf.{ADAPTIVE_EXECUTION_ENABLED, AUTO_BROADCASTJOIN_THRESHOLD, SHUFFLE_PARTITIONS}
+import org.apache.spark.sql.util.QueryExecutionListener
 
 /**
  * https://www.iteblog.com/archives/9870.html
@@ -19,17 +22,18 @@ object JoinExample {
       .config(AUTO_BROADCASTJOIN_THRESHOLD.key,"-1")
 //        .config(SHUFFLE_PARTITIONS.key,2)
       .getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
 
     // BHJ
-    broadcastJoin(spark)
+//    broadcastJoin(spark)
     // SMJ
     sortMergeJoin(spark)
     // SHJ
-    shuffleHashJoin(spark)
+//    shuffleHashJoin(spark)
     // shuffle-and-replicate nested loop join
-    shuffleReplicateNLJoin(spark)
+//    shuffleReplicateNLJoin(spark)
     // 同时指定多个join
-    moreJoin(spark)
+//    moreJoin(spark)
 
 //    Thread.sleep(86400000L)
 
@@ -95,6 +99,28 @@ object JoinExample {
     larger.createOrReplaceTempView("larger")
     small.createOrReplaceTempView("small")
 
+
+    spark.listenerManager.register(new QueryExecutionListener {
+      override def onSuccess(funcName: String, qe: QueryExecution, durationNs: Long): Unit = {
+        println("+++++++++++++++++++++++++")
+        println(funcName)
+        println(qe.analyzed)
+        println("+++++++++++++++++++++++++")
+      }
+
+      override def onFailure(funcName: String, qe: QueryExecution, exception: Exception): Unit = {
+
+      }
+    })
+
+    spark.sqlContext.sparkContext.addSparkListener(new SparkListener {
+      override def onStageSubmitted(stageSubmitted: SparkListenerStageSubmitted): Unit = {
+        super.onStageSubmitted(stageSubmitted)
+        println(stageSubmitted.properties)
+        println(stageSubmitted.stageInfo)
+      }
+    })
+
     val join1 =
       """
         |select /*+ SHUFFLE_MERGE(small) */ *
@@ -116,9 +142,10 @@ object JoinExample {
         |ON larger.id = small.id
         |""".stripMargin
 
+//    println(spark.sql(join1).queryExecution)
     spark.sql(join1).show()
-    spark.sql(join2).show()
-    spark.sql(join3).show()
+//    spark.sql(join2).show()
+//    spark.sql(join3).show()
   }
 
   def broadcastJoin(spark:SparkSession): Unit ={

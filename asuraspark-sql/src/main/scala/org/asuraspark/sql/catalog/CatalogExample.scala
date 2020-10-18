@@ -1,7 +1,11 @@
 package org.asuraspark.sql.catalog
 
+import java.net.URI
+
 import org.apache.spark.scheduler.{SparkListener, SparkListenerStageCompleted}
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.catalyst.TableIdentifier
+import org.apache.spark.sql.catalyst.catalog.{CatalogDatabase, CatalogTable}
 
 object CatalogExample {
   def main(args: Array[String]) {
@@ -34,7 +38,7 @@ object CatalogExample {
 
     // print all the tables
 
-    catalog.listTables().select("name").show()
+    catalog.listTables().show(false)
 
     // is cached
     println(catalog.isCached("sales"))
@@ -46,6 +50,6 @@ object CatalogExample {
     catalog.listTables().select("name").show()
 
     // list functions
-    catalog.listFunctions().select("name","description","className","isTemporary").show(1000,truncate = false)
+//    catalog.listFunctions().select("name","description","className","isTemporary").show(1000,truncate = false)
   }
 }

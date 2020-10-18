@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<aspectj>
+    <aspects>
+        <aspect name="org.asuraspark.sql.antlr4.mysql.AspectSql"/>
+    </aspects>
+    <weaver options="-XaddSerialVersionUID"></weaver>
+</aspectj>
