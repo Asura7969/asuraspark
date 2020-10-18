@@ -4,6 +4,10 @@ import java.net.URI
 import java.util.UUID
 
 import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.hive.ql.io.orc.OrcStruct
+import org.apache.hadoop.hive.serde2.avro.AvroGenericRecordWritable
+import org.apache.hadoop.io.{ArrayWritable, LongWritable, NullWritable, Text}
+import org.apache.hadoop.mapred.lib.CombineTextInputFormat
 import org.apache.spark.SparkException
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SaveMode
@@ -16,6 +20,7 @@ import org.apache.spark.sql.execution.SparkPlan
 import org.apache.spark.sql.execution.command.LoadDataCommand
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.hive.HiveExternalCatalog
+import org.apache.spark.sql.hive.io.{CombineAvroFileInputFormat, CombineOrcFileInputFormat, CombineParquetFileInputFormat}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -82,6 +87,8 @@ case class MergeTablePlan(
 
         // 先写暂存目录,写成功后删除原来目录文件,重命名暂存目录
         val read = sparkSession.read
+
+        val sc = sparkSession.sparkContext
         provider match {
           case "json" =>
             read.json(srcPath.toString).repartition(parallelism)
@@ -95,6 +102,36 @@ case class MergeTablePlan(
           case "orc" =>
             read.orc(srcPath.toString).repartition(parallelism)
               .write.mode(SaveMode.Overwrite).orc(tmpPath.toString)
+        }
+
+        // spark 读优化
+        provider match {
+          case "json" || "csv" =>
+            sc.newAPIHadoopFile(srcPath.toString,
+              classOf[CombineTextInputFormat],
+              classOf[LongWritable],
+              classOf[Text])
+              .saveAsTextFile(tmpPath.toString)
+          case "parquet" =>
+            sc.newAPIHadoopFile(srcPath.toString,
+              classOf[CombineParquetFileInputFormat],
+              classOf[NullWritable],
+              classOf[ArrayWritable])
+              .saveAsTextFile(tmpPath.toString)
+          case "orc" =>
+            sc.newAPIHadoopFile(srcPath.toString,
+              classOf[CombineOrcFileInputFormat],
+              classOf[NullWritable],
+              classOf[OrcStruct])
+              .saveAsTextFile(tmpPath.toString)
+          case "avro" =>
+            sc.newAPIHadoopFile(srcPath.toString,
+              classOf[CombineAvroFileInputFormat],
+              classOf[NullWritable],
+              classOf[AvroGenericRecordWritable])
+              .saveAsTextFile(tmpPath.toString)
+          case e: String =>
+            throw new RuntimeException(s"Not support file type: ${e}")
         }
 
         curFS.delete(srcPath)
