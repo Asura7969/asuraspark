@@ -4,7 +4,7 @@ import org.apache.spark.internal.io.HadoopMapReduceCommitProtocol
 
 /**
  * @description 幂等提交
- * @author gongwenzhou@hellobike.com
+ * @author asura7969
  * @created 2020/10/13 3:16 下午
  **/
 class IdempotentFileSinkCommitProtocol(jobId: String, path: String,
