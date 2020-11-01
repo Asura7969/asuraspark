@@ -7,7 +7,7 @@ import org.apache.spark.sql.{SaveMode, SparkSession}
 
 /**
  * @description
- * @author gongwenzhou@hellobike.com
+ * @author asura7969
  * @created 2020/10/13 3:17 下午
  **/
 object IdempotentFileJob {
