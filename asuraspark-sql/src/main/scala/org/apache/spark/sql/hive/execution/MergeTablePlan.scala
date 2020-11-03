@@ -89,20 +89,20 @@ case class MergeTablePlan(
         val read = sparkSession.read
 
         val sc = sparkSession.sparkContext
-        provider match {
-          case "json" =>
-            read.json(srcPath.toString).repartition(parallelism)
-              .write.mode(SaveMode.Overwrite).json(tmpPath.toString)
-          case "csv" =>
-            read.csv(srcPath.toString).repartition(parallelism)
-              .write.mode(SaveMode.Overwrite).csv(tmpPath.toString)
-          case "parquet" =>
-            read.parquet(srcPath.toString).repartition(parallelism)
-              .write.mode(SaveMode.Overwrite).parquet(tmpPath.toString)
-          case "orc" =>
-            read.orc(srcPath.toString).repartition(parallelism)
-              .write.mode(SaveMode.Overwrite).orc(tmpPath.toString)
-        }
+//        provider match {
+//          case "json" =>
+//            read.json(srcPath.toString).repartition(parallelism)
+//              .write.mode(SaveMode.Overwrite).json(tmpPath.toString)
+//          case "csv" =>
+//            read.csv(srcPath.toString).repartition(parallelism)
+//              .write.mode(SaveMode.Overwrite).csv(tmpPath.toString)
+//          case "parquet" =>
+//            read.parquet(srcPath.toString).repartition(parallelism)
+//              .write.mode(SaveMode.Overwrite).parquet(tmpPath.toString)
+//          case "orc" =>
+//            read.orc(srcPath.toString).repartition(parallelism)
+//              .write.mode(SaveMode.Overwrite).orc(tmpPath.toString)
+//        }
 
         // spark 读优化
         provider match {

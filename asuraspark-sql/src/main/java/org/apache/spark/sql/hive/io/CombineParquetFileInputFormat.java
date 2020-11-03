@@ -1,6 +1,7 @@
 package org.apache.spark.sql.hive.io;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.ql.io.orc.OrcStruct;
 import org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat;
 import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -8,10 +9,7 @@ import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-import org.apache.hadoop.mapreduce.lib.input.CombineFileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.CombineFileRecordReaderWrapper;
-import org.apache.hadoop.mapreduce.lib.input.CombineFileSplit;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +20,8 @@ public class CombineParquetFileInputFormat extends CombineFileInputFormat<NullWr
     private static final Logger LOG = LoggerFactory.getLogger(CombineParquetFileInputFormat.class);
 
     public RecordReader<NullWritable, ArrayWritable> createRecordReader(InputSplit split, TaskAttemptContext context) throws IOException {
-        return null;
+        return new CombineFileRecordReader<NullWritable, ArrayWritable>(
+                (CombineFileSplit)split, context, CombineParquetFileInputFormat.ParquetRecordReaderWrapper.class);
     }
 
     private static class ParquetRecordReaderWrapper
