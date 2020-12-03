@@ -106,7 +106,7 @@ case class MergeTablePlan(
 
         // spark 读优化
         provider match {
-          case "json" || "csv" =>
+          case a if(a.equals("json") || a.equals("csv")) =>
             sc.newAPIHadoopFile(srcPath.toString,
               classOf[CombineTextInputFormat],
               classOf[LongWritable],

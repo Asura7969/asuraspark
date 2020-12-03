@@ -20,9 +20,10 @@ object JoinExample {
       .appName("broadcast join example")
       .config(ADAPTIVE_EXECUTION_ENABLED.key,"true")
       .config(AUTO_BROADCASTJOIN_THRESHOLD.key,"-1")
+      .config("spark.shuffle.sort.bypassMergeThreshold", 50)
 //        .config(SHUFFLE_PARTITIONS.key,2)
       .getOrCreate()
-    spark.sparkContext.setLogLevel("ERROR")
+//    spark.sparkContext.setLogLevel("ERROR")
 
     // BHJ
 //    broadcastJoin(spark)
@@ -35,7 +36,7 @@ object JoinExample {
     // 同时指定多个join
 //    moreJoin(spark)
 
-//    Thread.sleep(86400000L)
+    Thread.sleep(86400000L)
 
     spark.stop()
 
@@ -143,7 +144,8 @@ object JoinExample {
         |""".stripMargin
 
 //    println(spark.sql(join1).queryExecution)
-    spark.sql(join1).show()
+    spark.sql(join2).show()
+    println(spark.sql(join2).queryExecution.executedPlan)
 //    spark.sql(join2).show()
 //    spark.sql(join3).show()
   }
